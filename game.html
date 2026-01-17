@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Banking Master Academy</title>
+    <style>
+        /* --- CSS STYLING --- */
+        :root {
+            --navy: #1e3c72;
+            --blue: #2a5298;
+            --gold: #f1c40f;
+            --green: #2ecc71;
+            --red: #e74c3c;
+            --white: #ffffff;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--navy), var(--blue));
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            background: var(--white);
+            width: 90%;
+            max-width: 500px;
+            padding: 40px;
+            border-radius: 25px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            text-align: center;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .hide { display: none; }
+
+        /* Progress Bar */
+        .progress-container {
+            background: #eee;
+            height: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        #progress-fill {
+            height: 100%;
+            background: var(--gold);
+            width: 0%;
+            transition: 0.4s;
+        }
+
+        /* Buttons */
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            background: #f9f9f9;
+            transition: 0.2s;
+        }
+
+        .btn:hover { border-color: var(--blue); background: #f0f7ff; }
+
+        /* Feedback Colors */
+        .correct { background-color: var(--green) !important; color: white !important; border-color: var(--green) !important; }
+        .wrong { background-color: var(--red) !important; color: white !important; border-color: var(--red) !important; }
+
+        .start-btn {
+            background: var(--gold);
+            color: #1e3c72;
+            border: none;
+            padding: 15px 40px;
+            font-size: 20px;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+        }
+
+        .score-display {
+            font-size: 60px;
+            color: var(--navy);
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div id="start-screen">
+            <h1 style="color: var(--navy)">🏦 Banking Academy</h1>
+            <p>Master your money skills in 10 steps!</p>
+            <button class="start-btn" onclick="startGame()">START ADVENTURE</button>
+        </div>
+
+        <div id="game-screen" class="hide">
+            <div class="progress-container"><div id="progress-fill"></div></div>
+            <p id="step-info" style="font-weight: bold; color: #666;">Step 1 of 10</p>
+            <h2 id="question-text">Question goes here?</h2>
+            <div id="options-box"></div>
+        </div>
+
+        <div id="result-screen" class="hide">
+            <h1>Mission Complete! 🎉</h1>
+            <p>Your Financial Mastery Score:</p>
+            <div class="score-display" id="final-score">0/10</div>
+            <p id="feedback-msg"></p>
+            <button class="btn" style="background: var(--navy); color: white;" onclick="location.reload()">RESTART ACADEMY</button>
+        </div>
+    </div>
+
+    <script>
+        /* --- JAVASCRIPT LOGIC --- */
+        const questions = [
+            // MODULE 1: Basics
+            { q: "What is a bank primarily used for?", a: ["Storing toys", "Keeping money safe", "Playing games"], c: 1 },
+            { q: "What is 'Interest'?", a: ["A reward for saving money", "A fine for being late", "Tax on food"], c: 0 },
+            // MODULE 2: Accounts
+            { q: "Which account is best for students and saving?", a: ["Current Account", "Savings Account", "Business Account"], c: 1 },
+            { q: "A 'Minor Account' is for people under what age?", a: ["10", "21", "18"], c: 2 },
+            // MODULE 3: Math
+            { q: "Balance: ₹1500. You deposit ₹500. New balance?", a: ["₹1000", "₹2000", "₹1500"], c: 1 },
+            { q: "If you withdraw ₹300 from ₹1000, how much is left?", a: ["₹700", "₹1300", "₹300"], c: 0 },
+            // MODULE 4: Security (ATM/OTP)
+            { q: "What should you do while entering your ATM PIN?", a: ["Say it loudly", "Cover the keypad", "Ask a stranger for help"], c: 1 },
+            { q: "If someone calls asking for your OTP, you should:", a: ["Tell them immediately", "Hang up and ignore", "Ask them why"], c: 1 },
+            // MODULE 5: Needs vs Wants
+            { q: "Is 'Life-saving Medicine' a Need or a Want?", a: ["Need", "Want"], c: 0 },
+            { q: "Is a 'New Video Game' a Need or a Want?", a: ["Need", "Want"], c: 1 }
+        ];
+
+        let currentStep = 0;
+        let score = 0;
+
+        function startGame() {
+            document.getElementById('start-screen').classList.add('hide');
+            document.getElementById('game-screen').classList.remove('hide');
+            loadStep();
+        }
+
+        function loadStep() {
+            const step = questions[currentStep];
+            document.getElementById('step-info').innerText = `Step ${currentStep + 1} of 10`;
+            document.getElementById('question-text').innerText = step.q;
+            document.getElementById('progress-fill').style.width = `${((currentStep) / 10) * 100}%`;
+
+            const box = document.getElementById('options-box');
+            box.innerHTML = '';
+
+            step.a.forEach((option, index) => {
+                const btn = document.createElement('button');
+                btn.innerText = option;
+                btn.classList.add('btn');
+                btn.onclick = () => checkAnswer(btn, index);
+                box.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(btn, choice) {
+            const correctIdx = questions[currentStep].c;
+            const allBtns = document.querySelectorAll('#options-box .btn');
+
+            allBtns.forEach(b => b.disabled = true); // Stop double clicks
+
+            if (choice === correctIdx) {
+                btn.classList.add('correct');
+                score++;
+            } else {
+                btn.classList.add('wrong');
+                allBtns[correctIdx].classList.add('correct'); // Show the right one
+            }
+
+            // Move to next question after 1.5 seconds
+            setTimeout(() => {
+                currentStep++;
+                if (currentStep < questions.length) {
+                    loadStep();
+                } else {
+                    showResults();
+                }
+            }, 1500);
+        }
+
+        function showResults() {
+            document.getElementById('game-screen').classList.add('hide');
+            document.getElementById('result-screen').classList.remove('hide');
+            document.getElementById('final-score').innerText = `${score} / 10`;
+
+            let msg = "";
+            if(score === 10) msg = "Perfect! You are a Certified Money Master! 🌟";
+            else if(score >= 7) msg = "Great job! You know how to manage money! ✅";
+            else msg = "Good try! Read the student booklet to learn more. 📚";
+            
+            document.getElementById('feedback-msg').innerText = msg;
+        }
+    </script>
+</body>
+</html>
