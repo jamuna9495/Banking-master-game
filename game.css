@@ -1,0 +1,139 @@
+/* --- Global Variables --- */
+:root {
+    --navy: #1e3c72;      /* Professional Banking Blue */
+    --blue: #2a5298;      /* Secondary Theme Blue */
+    --gold: #f1c40f;      /* Achievement Gold */
+    --green: #2ecc71;     /* Correct Answer Green */
+    --red: #e74c3c;       /* Wrong Answer Red */
+    --white: #ffffff;
+    --bg-light: #f9f9f9;
+}
+
+/* --- Background Setup --- */
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, var(--navy), var(--blue));
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    color: #333;
+}
+
+/* --- Main Game Container --- */
+.container {
+    background: var(--white);
+    width: 90%;
+    max-width: 500px;
+    padding: 40px;
+    border-radius: 25px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    text-align: center;
+    animation: fadeIn 0.6s ease-out;
+}
+
+.hide { display: none; }
+
+/* --- Progress Bar --- */
+.progress-container {
+    background: #eee;
+    height: 12px;
+    border-radius: 10px;
+    margin-bottom: 25px;
+    overflow: hidden;
+    border: 1px solid #ddd;
+}
+
+#progress-fill {
+    height: 100%;
+    background: linear-gradient(to right, var(--gold), #f39c12);
+    width: 0%;
+    transition: width 0.4s ease-in-out;
+}
+
+/* --- Question & Text --- */
+h1 { color: var(--navy); margin-bottom: 10px; }
+
+h2 { font-size: 22px; margin-bottom: 20px; color: #444; }
+
+#step-info {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: bold;
+    color: #888;
+    margin-bottom: 5px;
+}
+
+/* --- Buttons --- */
+.btn {
+    display: block;
+    width: 100%;
+    padding: 16px;
+    margin: 12px 0;
+    border: 2px solid #e0e0e0;
+    border-radius: 15px;
+    font-size: 17px;
+    font-weight: 600;
+    cursor: pointer;
+    background: var(--bg-light);
+    transition: all 0.2s ease;
+}
+
+.btn:hover {
+    border-color: var(--blue);
+    background: #f0f7ff;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+}
+
+.btn:active { transform: translateY(0); }
+
+/* --- Correct/Wrong Feedback --- */
+.correct {
+    background-color: var(--green) !important;
+    color: white !important;
+    border-color: var(--green) !important;
+    box-shadow: 0 5px 15px rgba(46, 204, 113, 0.4);
+}
+
+.wrong {
+    background-color: var(--red) !important;
+    color: white !important;
+    border-color: var(--red) !important;
+    box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+}
+
+/* --- Start & Result Screens --- */
+.start-btn {
+    background: var(--gold);
+    color: var(--navy);
+    border: none;
+    padding: 18px 50px;
+    font-size: 20px;
+    font-weight: bold;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-top: 20px;
+}
+
+.start-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 20px rgba(241, 196, 15, 0.4);
+}
+
+.score-display {
+    font-size: 70px;
+    color: var(--navy);
+    font-weight: 900;
+    margin: 20px 0;
+    text-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+}
+
+/* --- Animations --- */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
